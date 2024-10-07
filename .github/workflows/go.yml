@@ -1,0 +1,31 @@
+name: Go
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        arch: [amd64, arm64, 386] # 这里可以根据需要添加更多架构
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'
+
+    - name: Build
+      run: |
+        echo "Building for OS: ${{ matrix.os }} and ARCH: ${{ matrix.arch }}"
+        GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} go build -v ./...
+
+    - name: Test
+      run: go test -v ./...
